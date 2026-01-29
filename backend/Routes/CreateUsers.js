@@ -7,7 +7,8 @@ const bcrypt = require('bcryptjs')
 var jwt = require('jsonwebtoken');
 const axios = require('axios')
 const fetch = require('../middleware/fetchdetails');
-const jwtSecret = "HaHa"
+const jwtSecret = process.env.JWT_SECRET;
+const openCageApiKey = process.env.OPENCAGE_API_KEY;
 // var foodItems= require('../index').foodData;
 // require("../index")
 //Creating a user and storing data to MongoDB Atlas, No Login Requiered
@@ -104,11 +105,14 @@ router.post('/getuser', fetch, async (req, res) => {
 // Get logged in User details, Login Required.
 router.post('/getlocation', async (req, res) => {
     try {
+        if (!openCageApiKey) {
+            return res.status(500).json({ error: "Missing OPENCAGE_API_KEY" });
+        }
         let lat = req.body.latlong.lat
         let long = req.body.latlong.long
         console.log(lat, long)
         let location = await axios
-            .get("https://api.opencagedata.com/geocode/v1/json?q=" + lat + "+" + long + "&key=74c89b3be64946ac96d777d08b878d43")
+            .get("https://api.opencagedata.com/geocode/v1/json?q=" + lat + "+" + long + "&key=" + openCageApiKey)
             .then(async res => {
                 // console.log(`statusCode: ${res.status}`)
                 console.log(res.data.results)

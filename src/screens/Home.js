@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar';
 import Carousel from '../components/Carousal';
 import Card from '../components/Card';
+import { getApiBaseUrl } from '../config';
 
 export default function Home() {
   const [foodCat, setFoodCat] = useState([]);
@@ -10,7 +11,7 @@ export default function Home() {
 
   const loadData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/foodData", {
+      const response = await fetch(`${getApiBaseUrl()}/api/auth/foodData`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'

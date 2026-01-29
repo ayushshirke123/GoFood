@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar';
+import { getApiBaseUrl } from '../config';
 export default function Signup() {
   const [credentials, setCredentials] = useState({ name: "", email: "", password: "", geolocation: "" })
   let [address, setAddress] = useState("");
@@ -21,7 +22,7 @@ export default function Signup() {
     // console.log(latlong)
     let [lat, long] = latlong
     console.log(lat, long)
-    const response = await fetch("http://localhost:5000/api/auth/getlocation", {
+    const response = await fetch(`${getApiBaseUrl()}/api/auth/getlocation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -37,7 +38,7 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/auth/createuser", {
+    const response = await fetch(`${getApiBaseUrl()}/api/auth/createuser`, {
       // credentials: 'include',
       // Origin:"http://localhost:3000/login",
       method: 'POST',
