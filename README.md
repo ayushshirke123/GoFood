@@ -1,70 +1,141 @@
-# Getting Started with Create React App
+ # GoFood – MERN Stack Food Ordering App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+GoFood is a full‑stack **MERN** (MongoDB, Express, React, Node.js) application for browsing food items, adding them to a cart, placing orders, and viewing order history.
 
-## Available Scripts
+This README explains **how to install and run** both the frontend and backend so anyone can get the project running quickly.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 1. Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `backend/` – Node.js + Express API, MongoDB connection, auth, orders, and food data routes  
+- `src/` – React frontend (Create React App)
+  - `src/components/` – reusable UI components (Navbar, Card, Carousel, Footer, etc.)
+  - `src/screens/` – pages (Home, Login, Signup, Cart, MyOrder)
+  - `src/Modal.js` – modal used for the cart
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 2. Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Make sure you have these installed:
 
-### `npm run build`
+- **Node.js** (v16+ recommended) and **npm**
+- **Git**
+- A **MongoDB** database (local or MongoDB Atlas)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+> ⚠️ The MongoDB connection string is currently configured in `backend/db.js`.  
+> Replace it with **your own** MongoDB URI before running in production.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 3. Cloning the Repository
 
-### `npm run eject`
+```bash
+git clone https://github.com/ayushshirke123/GoFood.git
+cd GoFood
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 4. Install Dependencies
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 4.1. Install frontend dependencies (React)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+From the project root:
 
-## Learn More
+```bash
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 4.2. Install backend dependencies (Node/Express)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+cd backend
+npm install
+```
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 5. Running the App in Development
 
-### Analyzing the Bundle Size
+You need **two terminals**: one for the backend API and one for the React frontend.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 5.1. Start the backend (port **5000**)
 
-### Making a Progressive Web App
+From the `backend` folder:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+cd backend
+npm start
+```
 
-### Advanced Configuration
+This will:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Start the Express server on `http://localhost:5000`
+- Connect to MongoDB
+- Load food items and categories into global variables
 
-### Deployment
+### 5.2. Start the frontend (port **3000**) 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+In a **new terminal**, from the project root (`GoFood`):
 
-### `npm run build` fails to minify
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This will:
+
+- Start the React development server on `http://localhost:3000`
+- Open the app automatically in your browser
+
+The frontend calls the backend API at `http://localhost:5000`.
+
+---
+
+## 6. Useful npm Scripts
+
+### Frontend (root folder)
+
+- **`npm start`** – start React dev server (http://localhost:3000)
+- **`npm run build`** – build optimized production bundle
+- **`npm test`** – run tests
+
+### Backend (`backend` folder)
+
+- **`npm start`** – start the Express server with Node
+- **`npm run dev`** *(if you add nodemon script)* – start the server with auto‑reload
+
+---
+
+## 7. Environment & Configuration
+
+- **MongoDB URI** – edit `backend/db.js` and replace the hard‑coded connection string with your own.  
+  For better security, you can later move this to an environment variable (e.g. `process.env.MONGODB_URI`).
+- CORS is configured to allow requests from `http://localhost:3000` (the React app).
+
+---
+
+## 8. Login, Signup & Orders
+
+- **Signup**: creates a new user in MongoDB with hashed password (bcryptjs)
+- **Login**: returns a JWT token stored in `localStorage`
+- **Cart**: uses React context to manage cart state and opens in a modal
+- **Orders**: when you check out, order data is stored in MongoDB; `My Orders` shows previous orders
+
+---
+
+## 9. Troubleshooting
+
+- **Port 3000 already in use**
+  - Close any other React dev servers or apps using port 3000, then run `npm start` again.
+- **Port 5000 already in use**
+  - Stop any other Node/Express servers using port 5000, then run `npm start` in `backend` again.
+- **MongoDB connection errors**
+  - Check your connection string in `backend/db.js`
+  - Make sure your MongoDB cluster is running and IP access rules allow your machine.
+
+---
+
+Happy coding and enjoy GoFood! 🍕🍔
+
