@@ -5,14 +5,11 @@ const mongoDB = require('./db');
 
 const app = express();
 const port = process.env.PORT || 5000;
-const corsOrigin = process.env.CORS_ORIGIN || '*';
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
 
 if (!process.env.MONGODB_URI) {
-  console.error("Missing required env var: MONGODB_URI");
-  process.exit(1);
-}
-if (!process.env.JWT_SECRET) {
-  console.error("Missing required env var: JWT_SECRET");
+  console.error("❌ Missing required env var: MONGODB_URI");
+  console.error("   Please set MONGODB_URI in backend/.env file");
   process.exit(1);
 }
 

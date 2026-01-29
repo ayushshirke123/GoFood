@@ -28,8 +28,21 @@ export default function Home() {
       console.log("Categories count:", data[1]?.length);
       
       if (data && Array.isArray(data) && data.length >= 2) {
-        setFoodItem(data[0] || []);
-        setFoodCat(data[1] || []);
+        const items = data[0] || [];
+        const categories = data[1] || [];
+        
+        // Debug: Log category names and item category names
+        console.log("Category names:", categories.map(c => c.CategoryName));
+        console.log("Item category names:", [...new Set(items.map(i => i.CategoryName))]);
+        
+        // Debug: Count items per category
+        categories.forEach(cat => {
+          const count = items.filter(item => item.CategoryName === cat.CategoryName).length;
+          console.log(`Category "${cat.CategoryName}": ${count} items`);
+        });
+        
+        setFoodItem(items);
+        setFoodCat(categories);
       } else {
         console.error("Invalid data format:", data);
         setFoodItem([]);
@@ -57,30 +70,76 @@ export default function Home() {
       <div className='container' style={{ marginTop: '20px' }}>
         {foodItem.length > 0 ? (
           foodCat.length > 0 ? (
-            // Show items grouped by category
-            foodCat.map((category) => (
-              <div key={category._id} className='row mb-3'>
-                <div className='fs-3 m-3 text-white'>{category.CategoryName}</div>
-                <hr className='text-white' />
-                {foodItem
-                  .filter((item) => item.CategoryName === category.CategoryName && 
-                    (search === '' || item.name.toLowerCase().includes(search.toLowerCase())))
-                  .map((filterItems) => {
-                    // Handle different possible image field names
-                    const imageUrl = filterItems.img || filterItems.image || filterItems.imgSrc || filterItems.ImgSrc || '';
-                    return (
-                      <div key={filterItems._id} className='col-12 col-md-6 col-lg-3'>
-                        <Card
-                          foodName={filterItems.name}
-                          ImgSrc={imageUrl}
-                          options={filterItems.options[0]}
-                          item={filterItems}
-                        />
-                      </div>
-                    );
-                  })}
-              </div>
-            ))
+            <>
+              {/* Show items grouped by category */}
+              {foodCat.map((category) => {
+                const categoryItems = foodItem.filter((item) => {
+                  const categoryMatch = item.CategoryName && category.CategoryName &&
+                    item.CategoryName.toLowerCase() === category.CategoryName.toLowerCase();
+                  const searchMatch = search === '' || item.name.toLowerCase().includes(search.toLowerCase());
+                  return categoryMatch && searchMatch;
+                });
+                
+                if (categoryItems.length === 0) return null;
+                
+                return (
+                  <div key={category._id} className='row mb-3'>
+                    <div className='fs-3 m-3 text-white'>{category.CategoryName}</div>
+                    <hr className='text-white' />
+                    {categoryItems.map((filterItems) => {
+                      // Handle different possible image field names
+                      const imageUrl = filterItems.img || filterItems.image || filterItems.imgSrc || filterItems.ImgSrc || '';
+                      return (
+                        <div key={filterItems._id} className='col-12 col-md-6 col-lg-3'>
+                          <Card
+                            foodName={filterItems.name}
+                            ImgSrc={imageUrl}
+                            options={filterItems.options[0]}
+                            item={filterItems}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+              
+              {/* Show items that don't match any category */}
+              {(() => {
+                const matchedCategoryNames = new Set(
+                  foodCat.map(cat => cat.CategoryName.toLowerCase())
+                );
+                const unmatchedItems = foodItem.filter((item) => {
+                  const itemCategory = item.CategoryName ? item.CategoryName.toLowerCase() : '';
+                  const hasMatch = matchedCategoryNames.has(itemCategory);
+                  const searchMatch = search === '' || item.name.toLowerCase().includes(search.toLowerCase());
+                  return !hasMatch && searchMatch;
+                });
+                
+                if (unmatchedItems.length > 0) {
+                  return (
+                    <div className='row mb-3'>
+                      <div className='fs-3 m-3 text-white'>Other Items</div>
+                      <hr className='text-white' />
+                      {unmatchedItems.map((filterItems) => {
+                        const imageUrl = filterItems.img || filterItems.image || filterItems.imgSrc || filterItems.ImgSrc || '';
+                        return (
+                          <div key={filterItems._id} className='col-12 col-md-6 col-lg-3'>
+                            <Card
+                              foodName={filterItems.name}
+                              ImgSrc={imageUrl}
+                              options={filterItems.options[0]}
+                              item={filterItems}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+            </>
           ) : (
             // Show all items if no categories
             <div className='row mb-3'>
